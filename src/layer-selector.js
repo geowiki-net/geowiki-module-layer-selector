@@ -46,6 +46,8 @@ const LayerSelectorControl = L.Control.extend({
     const ul = document.createElement('ul')
 
     this.app.layers.forEach(layer => {
+      if (!layer) { return }
+
       const li = document.createElement('li')
 
       const layerName = document.createElement('div')
@@ -53,7 +55,21 @@ const LayerSelectorControl = L.Control.extend({
       li.appendChild(layerName)
 
       const dataName = document.createElement('div')
-      dataName.appendChild(document.createTextNode(layer.data))
+      const dataSelect = document.createElement('select')
+      dataName.appendChild(dataSelect)
+      app.dataSources.list().then(list => {
+        Object.values(list).forEach(l => {
+          const option = document.createElement('option')
+          option.value = l.id
+          option.appendChild(document.createTextNode(l.title))
+
+          if (layer.data === l.id) {
+            option.selected = true
+          }
+
+          dataSelect.appendChild(option)
+        })
+      })
       li.appendChild(dataName)
 
       ul.appendChild(li)

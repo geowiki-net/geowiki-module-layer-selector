@@ -59,9 +59,7 @@ const LayerSelectorControl = L.Control.extend({
       const dataName = document.createElement('div')
       const dataSelect = document.createElement('select')
       dataSelect.onchange = () => {
-        const newLayers = app.state.current.layers.map(l => {
-          return {...l}
-        })
+        const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
         newLayers[i].data = dataSelect.value
         app.state.apply({ layers: newLayers })
       }

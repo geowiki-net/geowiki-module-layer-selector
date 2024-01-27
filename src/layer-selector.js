@@ -45,7 +45,7 @@ const LayerSelectorControl = L.Control.extend({
   showLayers () {
     const ul = document.createElement('ul')
 
-    this.app.layers.forEach(layer => {
+    this.app.layers.forEach((layer, i) => {
       if (!layer) { return }
 
       const li = document.createElement('li')
@@ -56,6 +56,13 @@ const LayerSelectorControl = L.Control.extend({
 
       const dataName = document.createElement('div')
       const dataSelect = document.createElement('select')
+      dataSelect.onchange = () => {
+        const newLayers = app.state.current.layers.map(l => {
+          return {...l}
+        })
+        newLayers[i].data = dataSelect.value
+        app.state.apply({ layers: newLayers })
+      }
       dataName.appendChild(dataSelect)
       app.dataSources.list().then(list => {
         Object.values(list).forEach(l => {

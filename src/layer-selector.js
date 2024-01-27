@@ -37,6 +37,8 @@ const LayerSelectorControl = L.Control.extend({
 
       this.showLayers()
 
+      this.app.on('layers-update', () => this.showLayers())
+
       return false
     }
 

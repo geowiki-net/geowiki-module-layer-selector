@@ -57,26 +57,13 @@ const LayerSelectorControl = L.Control.extend({
       li.appendChild(layerName)
 
       const dataName = document.createElement('div')
-      const dataSelect = document.createElement('select')
+      const dataSelect = showSelector(app.dataSources.list(), layer.data)
       dataSelect.onchange = () => {
         const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
         newLayers[i].data = dataSelect.value
         app.state.apply({ layers: newLayers })
       }
       dataName.appendChild(dataSelect)
-      app.dataSources.list().then(list => {
-        Object.values(list).forEach(l => {
-          const option = document.createElement('option')
-          option.value = l.id
-          option.appendChild(document.createTextNode(l.title))
-
-          if (layer.data === l.id) {
-            option.selected = true
-          }
-
-          dataSelect.appendChild(option)
-        })
-      })
       li.appendChild(dataName)
 
       ul.appendChild(li)
@@ -90,3 +77,23 @@ const LayerSelectorControl = L.Control.extend({
     }
   }
 })
+
+function showSelector (list, current) {
+  const select = document.createElement('select')
+
+  list.then(list => {
+    Object.values(list).forEach(l => {
+      const option = document.createElement('option')
+      option.value = l.id
+      option.appendChild(document.createTextNode(l.title))
+
+      if (current === l.id) {
+        option.selected = true
+      }
+
+      select.appendChild(option)
+    })
+  })
+
+  return select
+}

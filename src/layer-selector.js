@@ -43,11 +43,20 @@ const LayerSelectorControl = L.Control.extend({
       }
 
       this.app.on('layers-update', () => this.updateLayers())
+      this.app.on('data-sources-update', () => this.updateEntities())
+      this.app.on('styles-update', () => this.updateEntities())
 
       return false
     }
 
     return container
+  },
+  updateEntities () {
+    this.layerDisplays.forEach(layer => {
+      if (layer) {
+        layer.updateEntities()
+      }
+    })
   },
   showLayers () {
     this.ul = document.createElement('ul')
@@ -88,9 +97,7 @@ const LayerSelectorControl = L.Control.extend({
   }
 })
 
-function showSelector (list, current) {
-  const select = document.createElement('select')
-
+function showSelector (select, list, current) {
   list.then(list => {
     Object.values(list).forEach(l => {
       const option = document.createElement('option')
@@ -104,8 +111,6 @@ function showSelector (list, current) {
       select.appendChild(option)
     })
   })
-
-  return select
 }
 
 class ShowLayer extends Events {
@@ -124,7 +129,8 @@ class ShowLayer extends Events {
     title.appendChild(document.createTextNode(modulekitLang.lang('Stylesheet')))
 
     layerName.appendChild(title)
-    this.layerSelect = showSelector(this.app.styleLoader.list(), this.layer.styleFile)
+    this.layerSelect = document.createElement('select')
+    showSelector(this.layerSelect, this.app.styleLoader.list(), this.layer.styleFile)
     this.layerSelect.onchange = () => {
       this.layer.styleFile = this.layerSelect.value
       this.emit('change', this.layer)
@@ -139,7 +145,8 @@ class ShowLayer extends Events {
     title.appendChild(document.createTextNode(modulekitLang.lang('Data Source')))
     dataName.appendChild(title)
 
-    this.dataSelect = showSelector(this.app.dataSources.list(), this.layer.data)
+    this.dataSelect = document.createElement('select')
+    showSelector(this.dataSelect, this.app.dataSources.list(), this.layer.data)
     this.dataSelect.onchange = () => {
       this.layer.data = this.dataSelect.value
       this.emit('change', this.layer)
@@ -153,5 +160,12 @@ class ShowLayer extends Events {
   update (layer) {
     this.layerSelect.value = layer.styleFile
     this.dataSelect.value = layer.data
+  }
+
+  updateEntities () {
+    this.layerSelect.innerHTML = ''
+    showSelector(this.layerSelect, this.app.styleLoader.list(), this.layer.styleFile)
+    this.dataSelect.innerHTML = ''
+    showSelector(this.dataSelect, this.app.dataSources.list(), this.layer.data)
   }
 }

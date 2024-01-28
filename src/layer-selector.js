@@ -68,13 +68,17 @@ const LayerSelectorControl = L.Control.extend({
 
     this.window.content.appendChild(this.ul)
 
+    const actions = document.createElement('div')
+    actions.className = 'actions'
+    this.window.content.appendChild(actions)
+
     const addLayer = document.createElement('button')
     addLayer.innerHTML = modulekitLang.lang('Add layer')
     addLayer.onclick = () => {
       const i = this.layerDisplays.length
       this.layerDisplays[i] = this.showLayer({}, i)
     }
-    this.window.content.appendChild(addLayer)
+    actions.appendChild(addLayer)
   },
   showLayer (layer, i) {
     const layerDisplay = new ShowLayer(this.app, layer)

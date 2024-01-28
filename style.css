@@ -20,6 +20,9 @@
 .layer-selector > ul > li > div > select {
   width: 100%;
 }
+.layer-selector > .actions {
+  padding: 0 0.5em;
+}
 
 @container (max-width: 25em) {
   .layer-selector > ul > li {

@@ -53,9 +53,7 @@ const LayerSelectorControl = L.Control.extend({
   },
   updateEntities () {
     this.layerDisplays.forEach(layer => {
-      if (layer) {
-        layer.updateEntities()
-      }
+      layer.updateEntities()
     })
   },
   showLayers () {
@@ -68,13 +66,27 @@ const LayerSelectorControl = L.Control.extend({
     })
 
     this.window.content.appendChild(this.ul)
+
+    const addLayer = document.createElement('button')
+    addLayer.innerHTML = modulekitLang.lang('Add layer')
+    addLayer.onclick = () => {
+      const i = this.layerDisplays.length
+      this.layerDisplays[i] = this.showLayer({}, i)
+    }
+    this.window.content.appendChild(addLayer)
   },
   showLayer (layer, i) {
     const layerDisplay = new ShowLayer(this.app, layer)
     const li = layerDisplay.show()
     layerDisplay.on('change', v => {
       const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
-      newLayers[i] = v
+
+      if (!v.data || !v.styleFile || !v.data) {
+        newLayers[i] = null
+      } else {
+        newLayers[i] = v
+      }
+
       app.state.apply({ layers: newLayers })
     })
 
@@ -158,8 +170,8 @@ class ShowLayer extends Events {
   }
 
   update (layer) {
-    this.layerSelect.value = layer.styleFile
-    this.dataSelect.value = layer.data
+    this.layerSelect.value = layer ? layer.styleFile : ''
+    this.dataSelect.value = layer ? layer.data : ''
   }
 
   updateEntities () {

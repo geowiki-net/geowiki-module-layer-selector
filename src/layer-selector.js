@@ -55,19 +55,22 @@ const LayerSelectorControl = L.Control.extend({
     this.layerDisplays = this.app.layers.map((layer, i) => {
       if (!layer) { return }
 
-      const layerDisplay = new ShowLayer(this.app, layer)
-      const li = layerDisplay.show()
-      layerDisplay.on('change', v => {
-        const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
-        newLayers[i] = v
-        app.state.apply({ layers: newLayers })
-      })
-
-      this.ul.appendChild(li)
-      return layerDisplay
+      return this.showLayer(layer, i)
     })
 
     this.window.content.appendChild(this.ul)
+  },
+  showLayer (layer, i) {
+    const layerDisplay = new ShowLayer(this.app, layer)
+    const li = layerDisplay.show()
+    layerDisplay.on('change', v => {
+      const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
+      newLayers[i] = v
+      app.state.apply({ layers: newLayers })
+    })
+
+    this.ul.appendChild(li)
+    return layerDisplay
   },
   updateLayers () {
     this.app.layers.forEach((layer, i) => {
@@ -76,17 +79,7 @@ const LayerSelectorControl = L.Control.extend({
       }
 
       if (!this.layerDisplays[i]) {
-        const layerDisplay = new ShowLayer(this.app, layer)
-
-        const li = layerDisplay.show()
-        layerDisplay.on('change', v => {
-          const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
-          newLayers[i] = v
-          app.state.apply({ layers: newLayers })
-        })
-
-        this.layerDisplays[i] = layerDisplay
-        this.ul.appendChild(li)
+        this.layerDisplays[i] = this.showLayer(layer, i)
       } else {
         this.layerDisplays[i].update(layer)
       }

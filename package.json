@@ -1,0 +1,20 @@
+{
+  "name": "geowiki-module-layer-selector",
+  "version": "0.0.0",
+  "description": "Adds a layer selector to the Geowiki App",
+  "main": "src/layer-selector.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geowiki-net/geowiki-module-layer-selector.git"
+  },
+  "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geowiki-net/geowiki-module-layer-selector/issues"
+  },
+  "homepage": "https://github.com/geowiki-net/geowiki-module-layer-selector#readme",
+  "dependencies": {
+    "modulekit-window": "github:plepe/modulekit-window"
+  }
+}

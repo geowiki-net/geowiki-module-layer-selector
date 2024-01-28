@@ -36,9 +36,13 @@ const LayerSelectorControl = L.Control.extend({
 
       this.window.show()
 
-      this.showLayers()
+      if (this.ul) {
+        this.updateLayers()
+      } else {
+        this.showLayers()
+      }
 
-      this.app.on('layers-update', () => this.showLayers())
+      this.app.on('layers-update', () => this.updateLayers())
 
       return false
     }
@@ -46,9 +50,9 @@ const LayerSelectorControl = L.Control.extend({
     return container
   },
   showLayers () {
-    const ul = document.createElement('ul')
+    this.ul = document.createElement('ul')
 
-    this.app.layers.forEach((layer, i) => {
+    this.layerDisplays = this.app.layers.map((layer, i) => {
       if (!layer) { return }
 
       const layerDisplay = new ShowLayer(this.app, layer)
@@ -59,15 +63,35 @@ const LayerSelectorControl = L.Control.extend({
         app.state.apply({ layers: newLayers })
       })
 
-      ul.appendChild(li)
+      this.ul.appendChild(li)
+      return layerDisplay
     })
 
-    const current = this.window.content.firstChild
-    if (current) {
-      this.window.content.replaceChild(ul, current)
-    } else {
-      this.window.content.appendChild(ul)
-    }
+    this.window.content.appendChild(this.ul)
+  },
+  updateLayers () {
+    this.app.layers.forEach((layer, i) => {
+      if (!layer) {
+        this.layerDisplays[i].close()
+      }
+
+      if (!this.layerDisplays[i]) {
+        const layerDisplay = new ShowLayer(this.app, layer)
+
+        const li = layerDisplay.show()
+        layerDisplay.on('change', v => {
+          const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
+          newLayers[i] = v
+          app.state.apply({ layers: newLayers })
+        })
+
+        this.layerDisplays[i] = layerDisplay
+        this.ul.appendChild(li)
+      } else {
+        this.layerDisplays[i].update(layer)
+      }
+
+    })
   }
 })
 
@@ -107,12 +131,12 @@ class ShowLayer extends Events {
     title.appendChild(document.createTextNode(modulekitLang.lang('Stylesheet')))
 
     layerName.appendChild(title)
-    const layerSelect = showSelector(this.app.styleLoader.list(), this.layer.styleFile)
-    layerSelect.onchange = () => {
-      this.layer.styleFile = layerSelect.value
+    this.layerSelect = showSelector(this.app.styleLoader.list(), this.layer.styleFile)
+    this.layerSelect.onchange = () => {
+      this.layer.styleFile = this.layerSelect.value
       this.emit('change', this.layer)
     }
-    layerName.appendChild(layerSelect)
+    layerName.appendChild(this.layerSelect)
     li.appendChild(layerName)
 
     const dataName = document.createElement('div')
@@ -122,14 +146,19 @@ class ShowLayer extends Events {
     title.appendChild(document.createTextNode(modulekitLang.lang('Data Source')))
     dataName.appendChild(title)
 
-    const dataSelect = showSelector(this.app.dataSources.list(), this.layer.data)
-    dataSelect.onchange = () => {
-      this.layer.data = dataSelect.value
+    this.dataSelect = showSelector(this.app.dataSources.list(), this.layer.data)
+    this.dataSelect.onchange = () => {
+      this.layer.data = this.dataSelect.value
       this.emit('change', this.layer)
     }
-    dataName.appendChild(dataSelect)
+    dataName.appendChild(this.dataSelect)
     li.appendChild(dataName)
 
     return li
+  }
+
+  update (layer) {
+    this.layerSelect.value = layer.styleFile
+    this.dataSelect.value = layer.data
   }
 }

@@ -111,6 +111,10 @@ const LayerSelectorControl = L.Control.extend({
 
 function showSelector (select, list, current) {
   list.then(list => {
+    const option = document.createElement('option')
+    option.value = ''
+    select.appendChild(option)
+
     Object.values(list).forEach(l => {
       const option = document.createElement('option')
       option.value = l.id

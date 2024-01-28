@@ -53,6 +53,11 @@ const LayerSelectorControl = L.Control.extend({
       const li = document.createElement('li')
 
       const layerName = document.createElement('div')
+      let title = document.createElement('div')
+      title.className = 'title'
+      title.appendChild(document.createTextNode(modulekitLang.lang('Stylesheet')))
+
+      layerName.appendChild(title)
       const layerSelect = showSelector(app.styleLoader.list(), layer.styleFile)
       layerSelect.onchange = () => {
         const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
@@ -63,6 +68,12 @@ const LayerSelectorControl = L.Control.extend({
       li.appendChild(layerName)
 
       const dataName = document.createElement('div')
+
+      title = document.createElement('div')
+      title.className = 'title'
+      title.appendChild(document.createTextNode(modulekitLang.lang('Data Source')))
+      dataName.appendChild(title)
+
       const dataSelect = showSelector(app.dataSources.list(), layer.data)
       dataSelect.onchange = () => {
         const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))

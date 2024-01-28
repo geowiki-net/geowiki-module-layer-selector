@@ -34,6 +34,7 @@ const LayerSelectorControl = L.Control.extend({
         title: modulekitLang.lang('layer-selector')
       })
 
+      this.window.content.classList.add('layer-selector')
       this.window.show()
 
       if (this.ul) {

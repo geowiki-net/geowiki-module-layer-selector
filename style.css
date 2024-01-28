@@ -1,0 +1,28 @@
+.layer-selector {
+  container-type: size;
+}
+.layer-selector > ul {
+  margin: 0 0;
+  padding: 0.5em 0.5em 0;
+}
+.layer-selector > ul > li {
+  border: 1px solid black;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+}
+.layer-selector > ul > li > div {
+  width: 100%;
+}
+.layer-selector > ul > li > div > select {
+  width: 100%;
+}
+
+@container (max-width: 25em) {
+  .layer-selector > ul > li {
+    flex-direction: column;
+  }
+}

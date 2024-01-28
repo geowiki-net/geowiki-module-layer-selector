@@ -53,7 +53,13 @@ const LayerSelectorControl = L.Control.extend({
       const li = document.createElement('li')
 
       const layerName = document.createElement('div')
-      layerName.appendChild(document.createTextNode(layer.styleFile))
+      const layerSelect = showSelector(app.styleLoader.list(), layer.styleFile)
+      layerSelect.onchange = () => {
+        const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
+        newLayers[i].styleFile = layerSelect.value
+        app.state.apply({ layers: newLayers })
+      }
+      layerName.appendChild(layerSelect)
       li.appendChild(layerName)
 
       const dataName = document.createElement('div')

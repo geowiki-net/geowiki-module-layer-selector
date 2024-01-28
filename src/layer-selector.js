@@ -1,4 +1,5 @@
 /* global L:false */
+import Events from 'events'
 import modulekitLang from 'modulekit-lang'
 import Window from 'modulekit-window'
 
@@ -50,38 +51,13 @@ const LayerSelectorControl = L.Control.extend({
     this.app.layers.forEach((layer, i) => {
       if (!layer) { return }
 
-      const li = document.createElement('li')
-
-      const layerName = document.createElement('div')
-      let title = document.createElement('div')
-      title.className = 'title'
-      title.appendChild(document.createTextNode(modulekitLang.lang('Stylesheet')))
-
-      layerName.appendChild(title)
-      const layerSelect = showSelector(app.styleLoader.list(), layer.styleFile)
-      layerSelect.onchange = () => {
+      const layerDisplay = new ShowLayer(this.app, layer)
+      const li = layerDisplay.show()
+      layerDisplay.on('change', v => {
         const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
-        newLayers[i].styleFile = layerSelect.value
+        newLayers[i] = v
         app.state.apply({ layers: newLayers })
-      }
-      layerName.appendChild(layerSelect)
-      li.appendChild(layerName)
-
-      const dataName = document.createElement('div')
-
-      title = document.createElement('div')
-      title.className = 'title'
-      title.appendChild(document.createTextNode(modulekitLang.lang('Data Source')))
-      dataName.appendChild(title)
-
-      const dataSelect = showSelector(app.dataSources.list(), layer.data)
-      dataSelect.onchange = () => {
-        const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
-        newLayers[i].data = dataSelect.value
-        app.state.apply({ layers: newLayers })
-      }
-      dataName.appendChild(dataSelect)
-      li.appendChild(dataName)
+      })
 
       ul.appendChild(li)
     })
@@ -113,4 +89,47 @@ function showSelector (list, current) {
   })
 
   return select
+}
+
+class ShowLayer extends Events {
+  constructor (app, layer) {
+    super()
+    this.app = app
+    this.layer = { data: layer.data, styleFile: layer.styleFile }
+  }
+
+  show () {
+    const li = document.createElement('li')
+
+    const layerName = document.createElement('div')
+    let title = document.createElement('div')
+    title.className = 'title'
+    title.appendChild(document.createTextNode(modulekitLang.lang('Stylesheet')))
+
+    layerName.appendChild(title)
+    const layerSelect = showSelector(this.app.styleLoader.list(), this.layer.styleFile)
+    layerSelect.onchange = () => {
+      this.layer.styleFile = layerSelect.value
+      this.emit('change', this.layer)
+    }
+    layerName.appendChild(layerSelect)
+    li.appendChild(layerName)
+
+    const dataName = document.createElement('div')
+
+    title = document.createElement('div')
+    title.className = 'title'
+    title.appendChild(document.createTextNode(modulekitLang.lang('Data Source')))
+    dataName.appendChild(title)
+
+    const dataSelect = showSelector(this.app.dataSources.list(), this.layer.data)
+    dataSelect.onchange = () => {
+      this.layer.data = dataSelect.value
+      this.emit('change', this.layer)
+    }
+    dataName.appendChild(dataSelect)
+    li.appendChild(dataName)
+
+    return li
+  }
 }

@@ -107,7 +107,7 @@ const LayerSelectorControl = L.Control.extend({
       if (!this.layerDisplays[i]) {
         this.layerDisplays[i] = this.showLayer(layer, i)
       } else {
-        this.layerDisplays[i].update(layer)
+        this.layerDisplays[i].update(layer.parameters)
       }
 
     })

@@ -138,7 +138,8 @@ class ShowLayer extends Events {
   constructor (app, layer) {
     super()
     this.app = app
-    this.layer = { data: layer.data, styleFile: layer.styleFile }
+    this.layerObject = layer
+    this.parameters = {...layer.parameters}
   }
 
   show () {
@@ -151,10 +152,10 @@ class ShowLayer extends Events {
 
     layerName.appendChild(title)
     this.layerSelect = document.createElement('select')
-    showSelector(this.layerSelect, this.app.styleLoader.list(), this.layer.styleFile)
+    showSelector(this.layerSelect, this.app.styleLoader.list(), this.parameters.styleFile)
     this.layerSelect.onchange = () => {
-      this.layer.styleFile = this.layerSelect.value
-      this.emit('change', this.layer)
+      this.parameters.styleFile = this.layerSelect.value
+      this.emit('change', this.parameters)
     }
     layerName.appendChild(this.layerSelect)
     li.appendChild(layerName)
@@ -167,26 +168,33 @@ class ShowLayer extends Events {
     dataName.appendChild(title)
 
     this.dataSelect = document.createElement('select')
-    showSelector(this.dataSelect, this.app.dataSources.list(), this.layer.data)
+    showSelector(this.dataSelect, this.app.dataSources.list(), this.parameters.data)
     this.dataSelect.onchange = () => {
-      this.layer.data = this.dataSelect.value
-      this.emit('change', this.layer)
+      this.parameters.data = this.dataSelect.value
+      this.emit('change', this.parameters)
     }
     dataName.appendChild(this.dataSelect)
+
+    this.actions = document.createElement('div')
+    this.actions.className = 'actions'
+    li.appendChild(this.actions)
+    this.app.emit('layer-selector-layer-actions', this.actions, this.layerObject)
+
     li.appendChild(dataName)
 
     return li
   }
 
-  update (layer) {
-    this.layerSelect.value = layer ? layer.styleFile : ''
-    this.dataSelect.value = layer ? layer.data : ''
+  update (parameters) {
+    this.parameters = {...parameters}
+    this.layerSelect.value = this.parameters ? this.parameters.styleFile : ''
+    this.dataSelect.value = this.parameters ? this.parameters.data : ''
   }
 
   updateEntities () {
     this.layerSelect.innerHTML = ''
-    showSelector(this.layerSelect, this.app.styleLoader.list(), this.layer.styleFile)
+    showSelector(this.layerSelect, this.app.styleLoader.list(), this.parameters.styleFile)
     this.dataSelect.innerHTML = ''
-    showSelector(this.dataSelect, this.app.dataSources.list(), this.layer.data)
+    showSelector(this.dataSelect, this.app.dataSources.list(), this.parameters.data)
   }
 }

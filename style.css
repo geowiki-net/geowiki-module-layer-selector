@@ -10,13 +10,28 @@
   padding: 0.5em;
   margin-bottom: 0.5em;
   list-style: none;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
   gap: 0.5em;
 }
-.layer-selector > ul > li > div {
-  width: 100%;
+.layer-selector > ul > li > div.stylesheet {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
+.layer-selector > ul > li > div.data_source {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+.layer-selector > ul > li > div.actions {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+}
+.layer-selector > ul > li > div.actions > div.action {
+  display: inline-block;
+  margin-right: 1em;
+}
+
 .layer-selector > ul > li > div > select {
   width: 100%;
 }
@@ -25,7 +40,20 @@
 }
 
 @container (max-width: 25em) {
-  .layer-selector > ul > li {
-    flex-direction: column;
-  }
+.layer-selector > ul > li {
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto;
+}
+.layer-selector > ul > li > div.stylesheet {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+.layer-selector > ul > li > div.data_source {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+.layer-selector > ul > li > div.actions {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+}
 }

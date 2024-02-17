@@ -27,7 +27,7 @@ const LayerSelectorControl = L.Control.extend({
     container.onclick = () => {
       if (this.window) {
         this.window.show()
-        return
+        return false
       }
 
       this.window = new Window({

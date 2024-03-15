@@ -84,7 +84,7 @@ const LayerSelectorControl = L.Control.extend({
     const layerDisplay = new ShowLayer(this.app, layer)
     const li = layerDisplay.show()
     layerDisplay.on('change', v => {
-      const newLayers = JSON.parse(JSON.stringify(app.state.current.layers))
+      const newLayers = app.state.current.layers ? JSON.parse(JSON.stringify(app.state.current.layers)) : []
 
       if (!v.data || !v.styleFile || !v.data) {
         newLayers[i] = null

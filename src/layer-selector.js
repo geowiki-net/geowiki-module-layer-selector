@@ -21,7 +21,7 @@ const LayerSelectorControl = L.Control.extend({
   },
   onAdd: function (map) {
     const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-layer-selector')
-    container.innerHTML = "<a href='#'><i class='fa fa-layer-group'></i></a>"
+    container.innerHTML = "<a href='#'><img src='images/logo.png' alt='Geowiki'></a>"
     container.title = modulekitLang.lang('layer-selector')
 
     container.onclick = () => {
